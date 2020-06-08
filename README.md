@@ -5,7 +5,7 @@ as well as the current state of all the basics around running simple websites.
 
 ## Deploying
 ----
-Currently, the site is geployed via git push. There is a remote associated with the repo on an nginx box.
+Currently, the site is deployed via git push. There is a remote associated with the repo on an nginx box.
 The repo has a git post receive hook that will cause it to update and run a build.
 
 

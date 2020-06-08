@@ -12,7 +12,7 @@ module.exports = {
     // Default title of the page
     siteTitleAlt: `Who is Ras?`,
     // Can be used for e.g. JSONLD
-    siteHeadline: `An exploration of an amusement park which thinks it is a person.`,
+    siteHeadline: `Personal Website`,
     // Will be used to generate absolute URLs for og:image etc.
     siteUrl: `https://raspatel.com`,
     // Used for SEO
@@ -39,9 +39,9 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Cara - @lekoarts/gatsby-theme-cara`,
-        short_name: `Cara`,
-        description: `Playful and Colorful One-Page portfolio featuring Parallax effects and animations`,
+        name: `Ras Patel -- Personal Website`,
+        short_name: `Ras`,
+        description: `A 4d hyperbolic embedding of nihilism mapped on a human shaped manifold.`,
         start_url: `/`,
         background_color: `#141821`,
         theme_color: `#f6ad55`,

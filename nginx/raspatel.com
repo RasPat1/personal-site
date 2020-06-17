@@ -33,8 +33,7 @@ server {
     }
 
     location /v1 {
-        root /home/raspat/www/personal-site/public;
-        try_files index index.html index.htm =404;
+        alias /home/raspat/www/personal-site/public/;
     }
 
     # Mail server auth file

@@ -11,9 +11,25 @@ map $uri $cache_control_header {
     ~*\.(?:js|css)$ "public, max-age=31536000, immutable";
 }
 
+# Redirect raspatel.com to www.raspatel.com
+server {
+    server_name raspatel.com;
+
+    listen [::]:443 ssl http2;
+    listen 443 ssl http2;
+
+    ssl_certificate /etc/letsencrypt/live/raspatel.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/raspatel.com/privkey.pem; # managed by Certbot
+    ssl_trusted_certificate /etc/letsencrypt/live/raspatel.com/fullchain.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    return 301 https://www.raspatel.com$request_uri;
+}
+
 server {
     root /home/raspat/www/personal-site/gatsby/public;
-    server_name raspatel.com www.raspatel.com;
+    server_name www.raspatel.com;
     index index.html;
 
     # For Reporting CSP violations

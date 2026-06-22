@@ -60,7 +60,7 @@ server {
     add_header Report-To '{"group": "csp", "max_age":31536000,"endpoints":[{"url":"https://$host/_csp_log"}]}';
     add_header Report-To '{"group": "nel", "max_age":31536000,"endpoints":[{"url":"https://$host/_nel_log"}], "include_subdomains": true}';
     add_header NEL '{"report_to":"default","max_age":31536000,"include_subdomains":true, "success_fraction": 1}';
-    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' img.lekoarts.de; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com; object-src 'none'; report-uri https://$host/_csp_log; report-to csp;";
+    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: img.lekoarts.de; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://www.google-analytics.com; object-src 'none'; report-uri https://$host/_csp_log; report-to csp;";
 
     resolver 1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001] # cloudflare dns
              8.8.8.8 8.8.4.4 [2001:4860:4860::8888] [2001:4860:4860::8844] # google dns

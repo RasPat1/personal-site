@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Arithmetic of Curing Everything</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0d0e;
+    --bg-2: #141618;
+    --bg-3: #1c1f22;
+    --rule: #2a2d31;
+    --ink: #e8e3d8;
+    --ink-2: #b8b2a4;
+    --ink-3: #7a746a;
+    --accent: #3fb88f;
+    --accent-2: #5aa3d9;
+    --accent-3: #d4a04a;
+    --accent-4: #c96a56;
+    --add: #3fb88f;
+    --inc: #5aa3d9;
+    --life: #6b6760;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Subtle texture overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: 
+      radial-gradient(circle at 20% 10%, rgba(63,184,143,0.035), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(90,163,217,0.025), transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .grain {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap { position: relative; z-index: 2; }
+
+  /* Hero */
+  header.hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 48px 60px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    flex: 0 0 40px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+  .eyebrow::after { flex: 1; opacity: 0.15; }
+
+  h1.title {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(44px, 7vw, 92px);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+    margin-bottom: 28px;
+  }
+  h1.title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+  }
+  .deck {
+    font-family: 'Newsreader', serif;
+    font-size: 23px;
+    line-height: 1.45;
+    color: var(--ink-2);
+    max-width: 720px;
+    font-weight: 300;
+    font-style: italic;
+  }
+  .byline {
+    margin-top: 48px;
+    display: flex;
+    gap: 36px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .byline span b { color: var(--ink); font-weight: 500; }
+
+  /* Article */
+  article {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px 120px;
+  }
+  .prose {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .prose p {
+    margin-top: 1.2em;
+  }
+  .prose p:first-of-type::first-line {
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
+  }
+  .dropcap::first-letter {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 5.2em;
+    line-height: 0.85;
+    float: left;
+    padding: 0.08em 0.12em 0 0;
+    color: var(--accent);
+    font-variation-settings: "opsz" 144;
+  }
+  h2.section {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(32px, 4.2vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 100px 0 8px;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+  }
+  h2.section em { font-style: italic; color: var(--accent); font-weight: 300; }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--ink-3);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    margin: 2.2em 0 0.4em;
+    font-style: italic;
+    color: var(--ink);
+    font-variation-settings: "opsz" 48;
+  }
+  .prose strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .prose em { color: var(--ink-2); }
+  .prose a { color: var(--accent-2); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Pull quote */
+  .pullquote {
+    max-width: 820px;
+    margin: 56px auto;
+    padding: 0 20px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(26px, 3vw, 36px);
+    line-height: 1.25;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    border-left: 2px solid var(--accent);
+    padding-left: 32px;
+  }
+  .pullquote b { font-weight: 500; font-style: normal; color: var(--accent); }
+
+  /* Stat strip */
+  .stat-strip {
+    max-width: 1040px;
+    margin: 56px auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .stat-strip .stat {
+    background: var(--bg-2);
+    padding: 28px 24px;
+  }
+  .stat .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .stat .value {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .stat .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-top: 8px;
+    letter-spacing: 0.04em;
+  }
+  .stat.accent .value { color: var(--accent); }
+  .stat.warn .value { color: var(--accent-4); }
+
+  /* Figure / viz block */
+  figure.viz {
+    max-width: 1080px;
+    margin: 72px auto;
+    background: var(--bg-2);
+    border: 1px solid var(--rule);
+    padding: 40px 40px 32px;
+    position: relative;
+  }
+  figure.viz .fig-label {
+    position: absolute;
+    top: 14px; left: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  figure.viz h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    margin-top: 18px;
+    margin-bottom: 4px;
+    font-variation-settings: "opsz" 48;
+  }
+  figure.viz .fig-sub {
+    font-family: 'Newsreader', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-2);
+    margin-bottom: 28px;
+    max-width: 640px;
+  }
+  figure.viz figcaption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 20px;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    padding-top: 14px;
+    border-top: 1px dashed var(--rule);
+  }
+
+  /* FDA chart */
+  .fda-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .fda-stats .s {
+    background: var(--bg-3);
+    padding: 16px 18px;
+    border: 1px solid var(--rule);
+  }
+  .fda-stats .s .l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+  }
+  .fda-stats .s .v {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  #fda-svg { width: 100%; height: 340px; display: block; }
+  .fda-bar { transition: opacity 0.15s ease; cursor: pointer; }
+  .fda-bar:hover { opacity: 0.8; }
+  .fda-bar.era-early { fill: var(--accent-2); }
+  .fda-bar.era-dark { fill: #6b6760; }
+  .fda-bar.era-modern { fill: var(--accent); }
+  .axis-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    fill: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .axis-line { stroke: var(--rule); stroke-width: 1; }
+
+  /* Pipeline funnel */
+  .funnel-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 20px 0;
+  }
+  .funnel-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 120px;
+    align-items: center;
+    gap: 20px;
+  }
+  .funnel-row .phase {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .funnel-bar-wrap {
+    background: var(--bg-3);
+    height: 44px;
+    position: relative;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .funnel-bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  .funnel-bar .seg {
+    height: 100%;
+    display: inline-block;
+  }
+  .funnel-count {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: right;
+    color: var(--ink);
+  }
+  .novelty-legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+  .novelty-legend .li { display: flex; align-items: center; gap: 8px; }
+  .novelty-legend .sw { width: 14px; height: 14px; display: inline-block; }
+
+  /* Attrition table */
+  table.attrition {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  table.attrition th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--ink-3);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 10px 14px 10px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  table.attrition td {
+    padding: 14px 14px 14px 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  table.attrition tr:last-child td { border-bottom: none; }
+  table.attrition .prob { font-family: 'Fraunces', serif; font-weight: 500; font-size: 16px; }
+  table.attrition .low { color: var(--accent-4); }
+  table.attrition .mid { color: var(--accent-3); }
+  table.attrition .high { color: var(--accent); }
+
+  /* Projected approvals */
+  #proj-svg { width: 100%; height: 360px; }
+  .proj-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+  .proj-legend .li { display: flex; align-items: center; gap: 8px; }
+  .proj-legend .sw { width: 14px; height: 14px; display: inline-block; }
+  .proj-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .proj-summary .c {
+    background: var(--bg-3);
+    border: 1px solid var(--rule);
+    padding: 16px;
+  }
+  .proj-summary .c .l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .proj-summary .c .v {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .proj-summary .c .d {
+    font-family: 'Newsreader', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+
+  /* Power law / disease concentration */
+  .powerlaw-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 28px 0 16px;
+    padding: 20px;
+    background: var(--bg-3);
+    border: 1px solid var(--rule);
+  }
+  .powerlaw-controls label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .powerlaw-controls input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--rule);
+    outline: none;
+  }
+  .powerlaw-controls input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .powerlaw-controls input[type=range]::-moz-range-thumb {
+    width: 18px; height: 18px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+  .powerlaw-controls .pl-readout {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 160px;
+    text-align: right;
+  }
+  .pl-readout em { font-style: italic; color: var(--accent); }
+  #pl-svg { width: 100%; height: 340px; }
+  .pl-area { fill: url(#plGrad); }
+  .pl-line { fill: none; stroke: var(--accent); stroke-width: 2; }
+  .pl-dot { fill: var(--accent); }
+  .pl-dot-active { fill: var(--ink); r: 6; }
+
+  .pl-callout {
+    background: linear-gradient(135deg, rgba(63,184,143,0.08), rgba(63,184,143,0.02));
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .pl-callout .big {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .pl-callout .desc {
+    font-family: 'Newsreader', serif;
+    font-size: 16px;
+    color: var(--ink-2);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  /* Top conditions bars */
+  #conditions-chart { margin-top: 20px; }
+  .cond-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 80px;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .cond-row .name { color: var(--ink-2); }
+  .cond-row .bar-wrap {
+    background: var(--bg-3);
+    height: 22px;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .cond-row .bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #5ed6a8);
+    transition: width 0.6s cubic-bezier(.22,.9,.3,1);
+  }
+  .cond-row .val {
+    text-align: right;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* Scenario phases */
+  .scenario {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 56px auto;
+    max-width: 1080px;
+  }
+  .phase-card {
+    background: var(--bg-2);
+    padding: 36px 28px;
+  }
+  .phase-card .p-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .phase-card .p-years {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .phase-card .p-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-2);
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+  .phase-card ul {
+    list-style: none;
+    font-family: 'Newsreader', serif;
+    font-size: 14.5px;
+    color: var(--ink-2);
+  }
+  .phase-card ul li {
+    padding-left: 18px;
+    position: relative;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .phase-card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    top: 4px;
+  }
+  .phase-card .p-cost {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--rule);
+    letter-spacing: 0.06em;
+  }
+  .phase-card .p-cost b { color: var(--ink); font-weight: 500; }
+
+  /* Solution cards */
+  .solutions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 40px 0 40px;
+  }
+  .sol-card {
+    background: var(--bg-2);
+    border: 1px solid var(--rule);
+    padding: 28px;
+    position: relative;
+  }
+  .sol-card .sn {
+    font-family: 'Fraunces', serif;
+    font-size: 46px;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+    position: absolute;
+    top: 22px; right: 24px;
+    opacity: 0.7;
+  }
+  .sol-card h5 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    max-width: 80%;
+  }
+  .sol-card p {
+    font-size: 15.5px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    font-family: 'Newsreader', serif;
+  }
+
+  /* Closing */
+  .closing-kicker {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(28px, 4vw, 46px);
+    line-height: 1.2;
+    text-align: center;
+    max-width: 860px;
+    margin: 100px auto 60px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .closing-kicker em { color: var(--accent); font-style: italic; }
+
+  footer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 48px 80px;
+    border-top: 1px solid var(--rule);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    background: var(--bg-3);
+    border: 1px solid var(--rule);
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    letter-spacing: 0.04em;
+  }
+  #tooltip b { color: var(--accent); font-weight: 500; }
+
+  /* Citations */
+  .cite {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6em;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    vertical-align: super;
+    padding: 0 1px;
+    line-height: 0;
+    letter-spacing: 0;
+  }
+  .cite:hover { color: var(--ink); }
+  .cite::before { content: '['; opacity: 0.6; }
+  .cite::after { content: ']'; opacity: 0.6; }
+
+  /* Estimate flags */
+  .estimate {
+    border-bottom: 1px dashed var(--accent-3);
+    cursor: help;
+  }
+  .estimate::after {
+    content: '◊';
+    font-size: 0.55em;
+    color: var(--accent-3);
+    vertical-align: super;
+    margin-left: 2px;
+    opacity: 0.8;
+  }
+
+  /* References section */
+  section.references {
+    max-width: 880px;
+    margin: 120px auto 40px;
+    padding: 48px 0 0;
+    border-top: 1px solid var(--rule);
+  }
+  section.references h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    font-variation-settings: "opsz" 96;
+  }
+  section.references .refs-sub {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    color: var(--ink-3);
+    font-size: 15px;
+    margin-bottom: 36px;
+  }
+  section.references .refs-sub b {
+    color: var(--accent-3);
+    font-style: normal;
+    border-bottom: 1px dashed var(--accent-3);
+  }
+  ol.ref-list {
+    list-style: none;
+    counter-reset: refcounter;
+    font-family: 'Newsreader', serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  ol.ref-list li {
+    counter-increment: refcounter;
+    padding: 14px 0 14px 42px;
+    border-bottom: 1px dashed var(--rule);
+    position: relative;
+  }
+  ol.ref-list li:last-child { border-bottom: none; }
+  ol.ref-list li::before {
+    content: counter(refcounter);
+    position: absolute;
+    left: 0;
+    top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  ol.ref-list li .ref-source {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  ol.ref-list li a {
+    color: var(--accent-2);
+    text-decoration: none;
+    word-break: break-word;
+  }
+  ol.ref-list li a:hover { text-decoration: underline; }
+  ol.ref-list li:target {
+    background: rgba(63,184,143,0.07);
+    padding-left: 52px;
+  }
+
+  /* Glossary terms (inline) */
+  .term {
+    border-bottom: 1px dotted var(--accent-2);
+    cursor: help;
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .term:hover {
+    color: var(--accent-2);
+    background: rgba(90,163,217,0.08);
+  }
+
+  /* Glossary section */
+  section.glossary {
+    max-width: 880px;
+    margin: 120px auto 40px;
+    padding: 48px 0 0;
+    border-top: 1px solid var(--rule);
+  }
+  section.glossary h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    font-variation-settings: "opsz" 96;
+  }
+  section.glossary .gloss-sub {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    color: var(--ink-3);
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+  .gloss-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .gloss-nav .gn-group {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    background: var(--bg-2);
+    padding: 6px 12px;
+    border: 1px solid var(--rule);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .gloss-nav .gn-group:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .gloss-group {
+    margin-bottom: 40px;
+  }
+  .gloss-group > h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 16px;
+    padding: 0;
+    font-style: normal;
+    font-weight: 500;
+  }
+  dl.glossary-list {
+    margin: 0;
+    padding: 0;
+  }
+  dl.glossary-list .entry {
+    padding: 16px 18px;
+    border: 1px solid transparent;
+    border-bottom: 1px dashed var(--rule);
+    transition: all 0.3s;
+    scroll-margin-top: 80px;
+  }
+  dl.glossary-list .entry:last-child {
+    border-bottom: none;
+  }
+  dl.glossary-list .entry.flash {
+    background: rgba(63,184,143,0.09);
+    border: 1px solid var(--accent);
+  }
+  dl.glossary-list dt {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    letter-spacing: -0.005em;
+  }
+  dl.glossary-list dt .acronym {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    margin-right: 10px;
+  }
+  dl.glossary-list dd {
+    font-family: 'Newsreader', serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  dl.glossary-list dd em {
+    color: var(--ink-3);
+    font-style: italic;
+  }
+
+  @media (max-width: 860px) {
+    body { font-size: 17px; }
+    header.hero { padding: 70px 24px 40px; }
+    article { padding: 0 24px 80px; }
+    .stat-strip, .fda-stats, .proj-summary { grid-template-columns: repeat(2, 1fr); }
+    .scenario, .solutions { grid-template-columns: 1fr; }
+    .funnel-row { grid-template-columns: 100px 1fr 80px; gap: 10px; }
+    .cond-row { grid-template-columns: 110px 1fr 60px; font-size: 11px; }
+    figure.viz { padding: 32px 20px 24px; }
+    figure.viz .fig-label { left: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div id="tooltip"></div>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">An essay on the disease space</div>
+  <h1 class="title">The Arithmetic of <em>Curing Everything</em></h1>
+  <p class="deck">There are roughly ten thousand distinct human diseases. We have effective therapies for about a thousand of them. At our current rate of progress, closing the gap takes six hundred years. Here is why — and what would change the math.</p>
+  <div class="byline">
+    <span>Analysis · <b>Zebra Diagnostics</b></span>
+    <span>Reading time · <b>18 min</b></span>
+    <span>Last updated · <b>April 2026</b></span>
+  </div>
+</header>
+
+<article>
+
+<!-- ============ SECTION 1 ============ -->
+<div class="prose">
+  <h2 class="section">The shape of what we <em>do not have</em></h2>
+  <div class="section-num">§ I · The disease landscape</div>
+  <p class="dropcap">According to the World Health Organization's <span class="term" data-slug="icd">ICD-11</span>, <span class="term" data-slug="nord">NORD</span> (the National Organization for Rare Disorders), and the Monarch Initiative's computational harmonization of major disease knowledge bases, there are roughly <strong>10,000 distinct, clinically recognized diseases</strong>.<a class="cite" href="#ref1">1</a><a class="cite" href="#ref2">2</a><a class="cite" href="#ref3">3</a> Fewer than 5% of them have an approved therapy.<a class="cite" href="#ref2">2</a></p>
+  <p>Most of what we <em>can</em> treat sits at the head of the disease distribution — hypertension, diabetes, hyperlipidemia, depression, arthritis. Most of what we <em>cannot</em> treat lives in the tail: roughly 7,000 rare diseases, each affecting fewer than 200,000 Americans by the <span class="term" data-slug="orphan">Orphan Drug Act</span>'s definition,<a class="cite" href="#ref5">5</a> the vast majority with no approved therapy at all.</p>
+  <p>That sounds like a narrow problem, because any single rare disease <em>is</em> small. It isn't. Collectively, rare diseases affect about <strong>1 in 10 Americans</strong> — roughly <strong>30 million people</strong>,<a class="cite" href="#ref2">2</a><a class="cite" href="#ref6">6</a> nearly as many as the 40.1 million Americans living with diabetes.<a class="cite" href="#ref7">7</a> The diseases are rare; the population living with one of them is not.</p>
+  <p><strong>Will we close the gap? When?</strong> Not this century, and probably not the next. At the current rate of genuinely additive novel approvals — <span class="estimate" title="Author estimate: subset of first-in-class approvals that address previously untreatable conditions. Not a published figure.">somewhere around 10 to 15 per year</span> — covering the remaining ~9,500 conditions takes <strong>600 to 900 years</strong>.<span class="estimate" title="Author calculation from estimated rates">◊</span> Christopher Austin, when he led <span class="term" data-slug="ncats">NCATS</span>, put the rare-disease version of the same math at "over 2,000 years."<a class="cite" href="#ref9">9</a></p>
+  <p><strong>Why haven't we, already?</strong> Because the system was not built for the long tail. Pharmaceutical R&amp;D runs on market-sized bets: a drug addressing 50 million patients can justify a billion-dollar development program; a drug addressing 5,000 cannot.<a class="cite" href="#ref4">4</a> The <span class="term" data-slug="orphan">Orphan Drug Act</span> of 1983 tried to correct for this with tax credits, user-fee waivers, and 7 years of market exclusivity, and it worked — for the subset of rare diseases commercially viable <em>even with</em> subsidies. But the economic logic of the <em><span class="term" data-slug="blockbuster">blockbuster drug</span></em> still pulls R&amp;D toward conditions that already have treatments, where the fifth <span class="term" data-slug="pd1">PD-1 inhibitor</span> for lung cancer can earn more than a first-ever therapy for a disease few have heard of. Federal basic-science funding has not tracked changes in disease burden either; the research–disease mismatch has widened rather than narrowed.</p>
+  <p>The rest of this section is a deeper look at the disease landscape itself, because the shape of the distribution is what makes the problem hard.</p>
+</div>
+
+<figure class="viz">
+  <div class="fig-label">Figure 1 · Disease concentration</div>
+  <h4>The power law of human illness</h4>
+  <p class="fig-sub">Most people have a handful of common conditions. Most diseases have almost no one. The top 10 conditions account for roughly 82% of all person-diagnoses in the United States.</p>
+
+  <div class="stat-strip" style="max-width:100%; margin:0 0 20px;">
+    <div class="stat"><div class="label">US population</div><div class="value">335M</div><div class="sub">Census Bureau<a class="cite" href="#ref8">8</a></div></div>
+    <div class="stat"><div class="label"><span class="term" data-slug="pd">Person-diagnoses</span></div><div class="value"><span class="estimate" title="Estimate: sum of prevalence counts across conditions">~900M</span></div><div class="sub">counting comorbidities</div></div>
+    <div class="stat"><div class="label">Distinct conditions</div><div class="value">~10,000</div><div class="sub">NORD<a class="cite" href="#ref2">2</a></div></div>
+    <div class="stat accent"><div class="label">Rare diseases (&lt;200K each)</div><div class="value">~7,000</div><div class="sub">~30M people in aggregate<a class="cite" href="#ref6">6</a></div></div>
+  </div>
+
+  <svg id="pl-svg" viewBox="0 0 800 320" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="plGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3fb88f" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#3fb88f" stop-opacity="0.02"/>
+      </linearGradient>
+    </defs>
+    <g id="pl-grid"></g>
+    <path id="pl-area-path" class="pl-area" d=""/>
+    <path id="pl-line-path" class="pl-line" d=""/>
+    <g id="pl-dots"></g>
+    <g id="pl-axis"></g>
+    <line id="pl-marker" x1="0" y1="20" x2="0" y2="280" stroke="#e8e3d8" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+  </svg>
+
+  <div class="powerlaw-controls">
+    <label>Explore: top</label>
+    <input type="range" id="pl-slider" min="1" max="10000" value="10" step="1">
+    <div class="pl-readout"><em id="pl-topn">10</em> conditions</div>
+  </div>
+
+  <div class="pl-callout">
+    <div class="big"><span id="pl-pct">82</span>%</div>
+    <div class="desc">The top <span id="pl-topn-2">10</span> conditions account for <span id="pl-coverage">~740M</span> of ~900M total person-diagnoses in the US.</div>
+  </div>
+
+  <div id="conditions-chart"></div>
+
+  <figcaption>Sources: CDC BRFSS 2023, NAMI 2024, AHA 2024, NIH/NIDDK, Alzheimer's Association, NORD. Person-diagnoses count each condition per person separately (one person with hypertension + diabetes = 2 person-diagnoses). Prevalence estimates reflect diagnosed + estimated undiagnosed cases.</figcaption>
+</figure>
+
+<div class="prose">
+  <p>The figure makes the concentration visible. The top 10 conditions — hypertension, obesity, hyperlipidemia, anxiety, arthritis, chronic pain, depression, substance use, migraine, diabetes — account for roughly 82% of all <span class="term" data-slug="pd">person-diagnoses</span> in the US. The top 25 get you to ~93%. The remaining ~9,975 conditions, most of them rare, make up the long tail — where nearly all of the <em>untreatable</em> disease sits.</p>
+  <p>The head and the tail are different problems requiring different tools. Progress at the head is incremental: better drugs, better diagnostics, better adherence for conditions we already know how to treat imperfectly. Progress in the tail is categorical: moving a disease from the "zero approved therapies" column to the "one approved therapy" column. The two kinds of progress move different numbers. Only the second kind shrinks the 9,500-disease gap.</p>
+</div>
+
+<div class="pullquote">
+  The top ten conditions account for <b>82% of the disease burden</b>. The remaining seven thousand rare diseases account for three percent. Any plausible theory of how we cure everything has to solve both of these problems at once — and they require almost entirely different tools.
+</div>
+
+<!-- ============ SECTION 2 ============ -->
+<div class="prose">
+  <h2 class="section">The current rate of <em>progress</em></h2>
+  <div class="section-num">§ II · Novel approvals</div>
+  <p>The natural next question is: how fast are we filling the gap? The cleanest measure is FDA novel drug approvals — new molecular entities and new biologics entering the US market for the first time. It is not a perfect proxy (a novel approval isn't the same as a first-ever treatment for a previously untreatable condition), but it is the number that shows up in almost every policy and investment conversation.</p>
+  <p>Here is the last forty years.</p>
+</div>
+
+<figure class="viz">
+  <div class="fig-label">Figure 2 · FDA CDER novel approvals</div>
+  <h4>Novel drug approvals, 1985–2025</h4>
+  <p class="fig-sub">New molecular entities and new biologics approved by the FDA's Center for Drug Evaluation and Research. Hover any bar for detail.</p>
+
+  <div class="fda-stats">
+    <div class="s"><div class="l">Total (1985–2025)</div><div class="v">1,387</div></div>
+    <div class="s"><div class="l">Average / year</div><div class="v">33.8</div></div>
+    <div class="s"><div class="l">Peak year</div><div class="v">2018 · 59</div></div>
+    <div class="s"><div class="l">Trough year</div><div class="v">2002 · 17</div></div>
+  </div>
+
+  <svg id="fda-svg" viewBox="0 0 820 340" preserveAspectRatio="none"></svg>
+
+  <div class="novelty-legend" style="margin-top:16px;">
+    <div class="li"><span class="sw" style="background:var(--accent-2)"></span>Early era (1985–1995)</div>
+    <div class="li"><span class="sw" style="background:#6b6760"></span>Dark ages (1996–2013, with notable spikes)</div>
+    <div class="li"><span class="sw" style="background:var(--accent)"></span>Modern acceleration (2014–present)</div>
+  </div>
+
+  <figcaption>Source: FDA CDER NME and new biologic approvals compilation (1985–2024); FDA novel drug approvals page (2025). Does not include CBER-only biologics (vaccines, gene therapies) prior to BPCI Act transition.</figcaption>
+</figure>
+
+<div class="prose">
+  <h3>The dark ages, 2002–2010: the Vioxx story</h3>
+  <p>The trough in the middle of that chart has a name. Vioxx (rofecoxib) was a Merck painkiller approved by the FDA in May 1999<a class="cite" href="#ref10">10</a> and aggressively marketed for arthritis, acute pain, and migraines. It was a <span class="term" data-slug="cox2">COX-2 inhibitor</span> — a newer class of <span class="term" data-slug="nsaid">NSAID</span> designed to relieve pain with fewer gastrointestinal side effects than traditional anti-inflammatories. By the time Merck voluntarily pulled it from the market on September 30, 2004, more than 80 million patients had taken it and annual sales had topped $2.5 billion<a class="cite" href="#ref11">11</a> — the largest prescription-drug withdrawal in history. A Lancet analysis estimated that Vioxx caused roughly <strong>88,000 heart attacks and 38,000 deaths</strong> in the US alone;<a class="cite" href="#ref12">12</a> an FDA drug-safety analyst's estimate ran higher, with as many as 139,000 serious cardiovascular events and 55,000 premature deaths attributable to the drug.<a class="cite" href="#ref13">13</a> Internal documents later showed Merck had downplayed cardiovascular signals visible in the <span class="term" data-slug="vigor">VIGOR trial</span> as early as 2000; the confirmatory <span class="term" data-slug="approve">APPROVe trial</span> in 2004 forced the withdrawal.<a class="cite" href="#ref14">14</a></p>
+  <p>The regulatory reaction was severe. The FDA tightened safety-trial requirements, pharma companies consolidated, and the industry retreated into an <span class="term" data-slug="crouch">institutional crouch</span> — the defensive posture an organization adopts after a high-profile failure, where avoiding the next scandal becomes more important than approving the next therapy. Risk-averse <span class="term" data-slug="bic">me-too drugs</span> crowded out novel mechanisms. The gray bars in the middle of the chart are the ~22-per-year output of that crouch: fewer approvals, fewer new mechanisms, fewer <span class="term" data-slug="fic">first-in-class</span> therapies. A decade of post-Vioxx caution.</p>
+  <h3>The modern acceleration, 2014–present: policy that worked</h3>
+  <p>The green bars on the right of the chart tell a different story — one worth dwelling on. Approvals roughly doubled to ~47 per year, and the change is traceable to a specific set of policy choices:</p>
+  <p>The FDA Safety and Innovation Act of 2012 (<span class="term" data-slug="fdasia">FDASIA</span>) created the <strong><span class="term" data-slug="breakthrough">Breakthrough Therapy designation</span></strong>, giving drugs that show early signs of substantial improvement over existing therapy an expedited pathway with intensive FDA guidance.<a class="cite" href="#ref15">15</a> Through June 2024, the FDA had received 1,516 breakthrough-designation requests, granted 587, and approved 317 breakthrough-designated products<a class="cite" href="#ref16">16</a> — hundreds of therapies that moved from lab to patient faster because of a single piece of legislation. FDASIA also broadened the 1992 <span class="term" data-slug="accel">Accelerated Approval</span> pathway<a class="cite" href="#ref17">17</a> and codified <span class="term" data-slug="priority">Priority Review</span>. The <span class="term" data-slug="orphan">Orphan Drug Act</span> incentives, created in 1983, matured over the same period: roughly half of 2025's novel approvals received orphan designation.<a class="cite" href="#ref18">18</a></p>
+  <p>This is the part that deserves to be stated plainly. <strong>Legislative choices saved lives at scale.</strong> Policies designed in committee rooms translated, within a decade, into tens of thousands of patients receiving therapies they would otherwise have waited years for — or never received. The 2014–present acceleration is concrete evidence that we can <em>decide</em> to improve millions of lives. The system responds to the rules we write for it.</p>
+  <h3>The sobering part</h3>
+  <p>Even at the new, higher rate, the raw approval count understates the progress problem. In 2025, <span class="term" data-slug="cder">CDER</span> approved 46 novel drugs; 23 received orphan designation and 20 were classified as first-in-class.<a class="cite" href="#ref18">18</a> In 2024 the total was 50,<a class="cite" href="#ref19">19</a> in 2023 it was 55.<a class="cite" href="#ref20">20</a> But "first-in-class" means <em>novel mechanism</em> — the nth <span class="term" data-slug="pd1">PD-1 inhibitor</span> for lung cancer can be first-in-class by target while adding nothing to the disease-coverage count. The net rate of conditions moving from "untreatable" to "treatable" is <span class="estimate" title="Author estimate: subset of first-in-class approvals that address a previously untreatable condition. Not a published figure.">closer to 10–20 per year</span>.</p>
+  <p>Keep the scale in view. There are roughly <strong>30 million Americans living with a rare disease</strong>, and fewer than 5% of those rare diseases have any approved therapy.<a class="cite" href="#ref2">2</a> That is the untreated population we are trying to address. At the genuinely additive rate of ~10–15 new disease-coverings per year,<span class="estimate" title="Author estimate">◊</span> the 30M Americans in the rare-disease tail are, effectively, waiting centuries.</p>
+</div>
+
+<!-- ============ SECTION 3 ============ -->
+<div class="prose">
+  <h2 class="section">The pipeline we actually <em>have</em></h2>
+  <div class="section-num">§ III · The global funnel</div>
+  <p>The pipeline is the leading indicator. Every drug approved ten years from now is in a lab somewhere today. Citeline's Pharmaprojects database tracked 22,825 active drugs in the global R&amp;D pipeline at the start of 2024, up 7.2% year-over-year,<a class="cite" href="#ref21">21</a> with roughly 22,940 at the start of 2026.<a class="cite" href="#ref22">22</a> Somewhere between 10,000 and 12,000 of those are in active clinical development (Phases I–III);<a class="cite" href="#ref21">21</a> the rest are preclinical.</p>
+  <p>But the pipeline is heavily front-loaded. Most drugs are in early stages, and the overwhelming majority of them will never be approved. This is the attrition funnel — and its shape is the single most important thing to understand about drug development.</p>
+</div>
+
+<figure class="viz">
+  <div class="fig-label">Figure 3 · Global drug pipeline</div>
+  <h4>The development funnel, by phase and novelty</h4>
+  <p class="fig-sub">Each phase reflects approximate program counts as of early 2026. Novelty composition based on Citeline / Biomedtracker 2014–2023 analysis and industry synthesis.</p>
+
+  <div class="novelty-legend">
+    <div class="li"><span class="sw" style="background:#3fb88f"></span>First-in-class / novel target (~18%)</div>
+    <div class="li"><span class="sw" style="background:#5aa3d9"></span>Best-in-class / follow-on (~32%)</div>
+    <div class="li"><span class="sw" style="background:#d4a04a"></span>New indication / lifecycle (~25%)</div>
+    <div class="li"><span class="sw" style="background:#6b6760"></span>Biosimilar / reformulation (~15%)</div>
+    <div class="li"><span class="sw" style="background:#3a3d41"></span>Other / undisclosed (~10%)</div>
+  </div>
+
+  <div class="funnel-stack" id="funnel-stack"></div>
+
+  <table class="attrition">
+    <thead>
+      <tr>
+        <th>Starting phase</th>
+        <th>Phase transition rate</th>
+        <th>Cumulative P(approval)</th>
+        <th>Drugs in phase</th>
+        <th>Expected approvals</th>
+        <th>Timeline</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Preclinical</td><td>~5% enter Phase I</td><td class="prob low">~0.3%</td><td>11,500</td><td>~35</td><td>10–15 yr</td></tr>
+      <tr><td>Phase I</td><td>47% → Phase II</td><td class="prob low">6.7%</td><td>5,500</td><td>~370</td><td>8–12 yr</td></tr>
+      <tr><td>Phase II</td><td>28% → Phase III</td><td class="prob mid">14.3%</td><td>4,000</td><td>~570</td><td>5–8 yr</td></tr>
+      <tr><td>Phase III</td><td>55% → Filing</td><td class="prob mid">50.6%</td><td>2,700</td><td>~1,370</td><td>2–4 yr</td></tr>
+      <tr><td>Filed / NDA</td><td>92% → Approval</td><td class="prob high">92%</td><td>350</td><td>~320</td><td>0.5–1.5 yr</td></tr>
+    </tbody>
+  </table>
+
+  <figcaption>Pipeline counts by phase are approximate figures synthesized from Citeline Pharmaprojects and industry analyses — exact counts vary by source.<span class="estimate" title="Author synthesis">◊</span> Phase transition rates are from Citeline / Biomedtracker's 2014–2023 analysis of 12,728 clinical phase transitions.<a class="cite" href="#ref23">23</a> LOA = likelihood of approval. Novelty mix by phase is synthesized from multiple industry sources and involves judgment.<span class="estimate" title="Author synthesis">◊</span> The Phase I success rate has collapsed from over 75% during 2006–2008 to below 40% today<a class="cite" href="#ref23">23</a> — partly a good thing (killing bad drugs earlier with biomarkers), but it dramatically reduces throughput.</figcaption>
+</figure>
+
+<div class="prose">
+  <p>Three things jump out of the funnel. First, <strong>the attrition is ruthless and getting worse</strong>. A new drug entering <span class="term" data-slug="phase1">Phase I</span> today has a 6.7% chance of ever being approved — down from 10.4% in 2014.<a class="cite" href="#ref23">23</a> <span class="term" data-slug="phase2">Phase II</span> is the toughest hurdle at just 28% survival;<a class="cite" href="#ref23">23</a> biology reveals itself there, and it is usually unkind. Second, <strong>the pipeline is large enough to produce roughly 2,000 eventual approvals</strong> from current programs over the next decade<span class="estimate" title="Author calculation applying phase transition rates to current pipeline counts">◊</span> — which sounds substantial. Third, and most importantly, <strong>most of those approvals will not address new diseases</strong>.</p>
+  <p>The novelty mix inside the pipeline is where this gets uncomfortable. Only a minority of programs are <span class="term" data-slug="fic">first-in-class</span> by mechanism, and the majority are <span class="term" data-slug="bic">best-in-class follow-ons</span>, new <span class="term" data-slug="indication">indications</span> for existing drugs, or <span class="term" data-slug="biosimilar">biosimilars</span> and reformulations. And first-in-class is itself generous — it means <em>novel mechanism</em>, not <em>novel disease</em>. The fifth PD-1 inhibitor for lung cancer can be first-in-class by target while adding nothing to the disease-coverage count.<span class="estimate" title="Author framing, not a cited figure">◊</span></p>
+</div>
+
+<figure class="viz">
+  <div class="fig-label">Figure 4 · Projections</div>
+  <h4>Projected US novel drug approvals, 2026–2040</h4>
+  <p class="fig-sub">Near-term projections apply the 50.6% Phase III conversion rate to current late-stage programs. Long-term assumes modest pipeline growth (~5–7% annually) and gradual AI efficiency gains.</p>
+
+  <div class="proj-summary">
+    <div class="c"><div class="l">Near-term 2026–28</div><div class="v">50–60</div><div class="d">from current Phase III</div></div>
+    <div class="c"><div class="l">Mid-term 2029–33</div><div class="v">55–70</div><div class="d">pipeline growth + AI</div></div>
+    <div class="c"><div class="l">Long-term 2034–40</div><div class="v">65–90</div><div class="d">platform therapies scale</div></div>
+    <div class="c"><div class="l">Cumulative 2026–40</div><div class="v">~900</div><div class="d">novel drug approvals</div></div>
+  </div>
+
+  <svg id="proj-svg" viewBox="0 0 820 360"></svg>
+
+  <div class="proj-legend">
+    <div class="li"><span class="sw" style="background:var(--add)"></span>Genuinely additive (new disease coverage)</div>
+    <div class="li"><span class="sw" style="background:var(--inc)"></span>Incremental (better option for treated disease)</div>
+    <div class="li"><span class="sw" style="background:var(--life)"></span>Lifecycle (reformulation, biosimilar, new indication)</div>
+  </div>
+
+  <div class="pl-callout" style="margin-top:28px;">
+    <div class="big"><span class="estimate" title="Author estimate">~10–15</span></div>
+    <div class="desc">Of ~50 novel approvals per year, roughly ten to fifteen are, by our estimate, the <em>first effective treatment</em> for a previously untreatable condition. This is not a published figure — it is the author's synthesis. It is also the number that actually shrinks the 9,000-disease gap.</div>
+  </div>
+
+  <figcaption>Near-term projections (2026–2028) apply the 50.6% Phase III conversion rate<a class="cite" href="#ref23">23</a> to current late-stage programs. Projections beyond 2028 assume modest pipeline growth (~5–7% annually) and AI efficiency gains — these are the author's synthesis, not a published forecast.<span class="estimate" title="Author projection">◊</span> The novelty split (additive / incremental / lifecycle) is likewise a synthesis.<span class="estimate" title="Author synthesis">◊</span> "First-in-class" means novel mechanism; many FIC drugs target diseases that already have treatments via other mechanisms.</figcaption>
+</figure>
+
+<!-- ============ SECTION 4 ============ -->
+<div class="prose">
+  <h2 class="section">The honest <em>math</em></h2>
+  <div class="section-num">§ IV · Years, trillions, paradigms</div>
+  <p>Put the numbers together. If we need therapies for the ~9,000 diseases we currently cannot treat, and the rate of genuinely additive approvals is 10–15 per year,<span class="estimate" title="Author estimate">◊</span> covering the remaining disease space takes <strong>600 to 900 years</strong>.<span class="estimate" title="Author calculation from estimated rates">◊</span> This is the same order of magnitude as Christopher Austin's "over 2,000 years" estimate for rare diseases specifically.<a class="cite" href="#ref9">9</a> Even under optimistic projections — pipeline growth, AI-driven efficiency gains pushing the additive rate to 25–30/year by the late 2030s<span class="estimate" title="Author projection">◊</span> — you still arrive at 300+ years without a paradigm shift.</p>
+  <p>The cost arithmetic is similarly grim. The most widely-cited estimate comes from Joseph DiMasi and colleagues at the Tufts Center for the Study of Drug Development: the capitalized cost of developing a new drug that reaches market is $2.558 billion (2013 dollars), rising to $2.87 billion when post-approval R&amp;D is included.<a class="cite" href="#ref24">24</a> Only about 9.6% of drugs entering clinical trials ever receive FDA approval.<a class="cite" href="#ref24">24</a> A more recent ecosystem-wide analysis by Amitabh Chandra and colleagues, covering the full biopharma R&amp;D landscape (not just the top 20 companies), found that total global biopharma R&amp;D investment reached $276 billion in 2021 — which works out to <strong>roughly $5 billion in total ecosystem spending per approved drug</strong>.<a class="cite" href="#ref25">25</a> At those unit costs, brute-forcing therapies for the remaining 9,000 diseases would run into the tens of trillions of dollars<span class="estimate" title="Author calculation">◊</span> — decades of current global biomedical R&amp;D spending.</p>
+  <p>Put that way, the answer to "how long would it take to cure everything?" is: <em>longer than civilization has existed, at a cost larger than any war we have ever fought</em>. This is not a minor inefficiency. It is a paradigm that does not work at the scale of the problem.</p>
+</div>
+
+<div class="pullquote">
+  At the current rate, it takes <b>six hundred to nine hundred years</b> to cover the remaining disease space — and $9–23 trillion in R&D. The bottleneck is not money. It is the unit of development: one disease, one drug, one trial, one approval. That unit has to change.
+</div>
+
+<!-- ============ SECTION 5 ============ -->
+<div class="prose">
+  <h2 class="section">What would actually <em>get us there</em></h2>
+  <div class="section-num">§ V · The six leverage points</div>
+  <p>The roadmap is not primarily about spending more money linearly. It requires structural shifts in how therapeutics are developed, approved, and paid for. Six leverage points matter.</p>
+</div>
+
+<div class="solutions">
+  <div class="sol-card">
+    <div class="sn">01</div>
+    <h5>Platform therapies, not one-off drugs</h5>
+    <p><span class="term" data-slug="gt">Gene therapy</span>, <span class="term" data-slug="crispr">CRISPR</span> editing, <span class="term" data-slug="mrna">mRNA</span>, and cell therapies are <em>programmable</em>. The same <span class="term" data-slug="platform">platform</span> can address hundreds of diseases by swapping the target. This is the single biggest leverage point — it collapses 7,000 separate rare-disease programs into perhaps 50–100 platform efforts with disease-specific customizations. The FDA's new <span class="term" data-slug="plausible">plausible-mechanism pathway</span> for bespoke therapies is an early example.</p>
+  </div>
+  <div class="sol-card">
+    <div class="sn">02</div>
+    <h5>AI-driven discovery to compress timelines</h5>
+    <p>If AI can cut failure rates from 90% to 60–70%, and reduce discovery-to-<span class="term" data-slug="ind">IND</span> timelines from 4–6 years to 1–2 years, per-drug costs fall 3–5×.<span class="estimate" title="Author projection based on current AI drug discovery trajectories">◊</span> The first AI-designed drug approval is projected for 2026–2027, and AI-discovered programs are now advancing through clinical trials in increasing numbers.</p>
+  </div>
+  <div class="sol-card">
+    <div class="sn">03</div>
+    <h5>Regulatory reform for platform approvals</h5>
+    <p>Instead of requiring a full Phase I–III for every disease-specific variant of a gene therapy, approve the <em>platform</em> once and require smaller confirmatory studies for each new target. The FDA has begun moving this direction with gene-therapy platform guidance.</p>
+  </div>
+  <div class="sol-card">
+    <div class="sn">04</div>
+    <h5>Solving the rare-disease economics problem</h5>
+    <p>Most untreated diseases are rare. Market-based pricing cannot support $1B development programs for 5,000-patient markets. Options include: <span class="term" data-slug="subscription">subscription / "Netflix" payment models</span> for payers, <span class="term" data-slug="intlrisk">international risk-pooling</span>, <span class="term" data-slug="amc">advance market commitments</span>, or direct government-funded development at <span class="term" data-slug="barda">BARDA</span> scale.</p>
+  </div>
+  <div class="sol-card">
+    <div class="sn">05</div>
+    <h5>Closing the basic-biology knowledge gap</h5>
+    <p>For many diseases we lack the mechanistic understanding to design a therapy at all. Federal funding supports most of the basic research that reveals targets — and research effort has not tracked changes in disease burden. Without intentional alignment, the research-disease divergence widens.</p>
+  </div>
+  <div class="sol-card">
+    <div class="sn">06</div>
+    <h5>Diagnostics as a force multiplier</h5>
+    <p>Many diseases are treatable but go undiagnosed or misdiagnosed. The Society to Improve Diagnosis in Medicine and the 2015 National Academy of Medicine report estimate <strong>12 million Americans experience a diagnostic error</strong> in outpatient care every year,<a class="cite" href="#ref26">26</a> and a 2023 Johns Hopkins analysis found that approximately <strong>795,000 Americans are permanently disabled or killed annually</strong> by misdiagnosis of dangerous disease.<a class="cite" href="#ref27">27</a> Reducing diagnostic error does not require new drugs, just better application of existing knowledge. A Bayesian decision-support tool that cuts diagnostic delay from years to weeks for rare disease can be worth dozens of drug approvals in patient impact.</p>
+  </div>
+</div>
+
+<!-- ============ SECTION 6 ============ -->
+<div class="prose">
+  <h2 class="section">A realistic thirty-year <em>scenario</em></h2>
+  <div class="section-num">§ VI · If it all goes right</div>
+  <p>Here is what the next three decades <em>could</em> look like if the leverage points above compound on each other. What follows is <strong>entirely speculative</strong> — an optimistic but not fantastical scenario where AI delivers, platforms scale, and regulators adapt. No part of this section is drawn from a published forecast.<span class="estimate" title="Author speculation, not sourced">◊</span></p>
+</div>
+
+<div class="scenario">
+  <div class="phase-card">
+    <div class="p-num">Phase 01 · 2026–2035</div>
+    <div class="p-years">Years 1–10</div>
+    <div class="p-title">Platforms validate</div>
+    <ul>
+      <li>Gene-editing and mRNA <span class="term" data-slug="platform">platforms</span> validated for 200–500 <span class="term" data-slug="monogenic">monogenic</span> rare diseases</li>
+      <li>AI cuts drug development cost by 2–3×</li>
+      <li>Novel approvals rise to 80–100 per year</li>
+      <li>FDA plausible-mechanism pathway scales to individualized therapies</li>
+    </ul>
+    <div class="p-cost">Incremental cost · <b>~$500B</b></div>
+  </div>
+  <div class="phase-card">
+    <div class="p-num">Phase 02 · 2036–2045</div>
+    <div class="p-years">Years 11–20</div>
+    <div class="p-title">Platforms scale</div>
+    <ul>
+      <li>Platform therapies scaled to 2,000–3,000 rare diseases</li>
+      <li>Combination therapies + diagnostics bring effective treatments to ~5,000 conditions total</li>
+      <li>AI-designed small molecules tackle the "hard" chronic diseases — neurodegeneration, autoimmunity</li>
+    </ul>
+    <div class="p-cost">Incremental cost · <b>~$1–2T</b></div>
+  </div>
+  <div class="phase-card">
+    <div class="p-num">Phase 03 · 2046–2055</div>
+    <div class="p-years">Years 21–30</div>
+    <div class="p-title">The long tail</div>
+    <ul>
+      <li>Remaining long-tail diseases addressed through personalized therapies, gene editing, synthetic biology</li>
+      <li>Aging itself partially addressed as a treatable condition</li>
+      <li>Effective therapeutic coverage reaches 8,000–9,000+ diseases</li>
+    </ul>
+    <div class="p-cost">Incremental cost · <b>~$1–2T</b></div>
+  </div>
+</div>
+
+<div class="prose">
+  <p>Total cost across thirty years: <strong>$3–5 trillion</strong>, or roughly $100–170 billion per year globally. That is a 30–50% increase over current biomedical R&amp;D spending — but directed dramatically more efficiently. It is not a fantasy number. It is well within the range of what coordinated effort can mobilize.</p>
+  <p>The critical variable is not money. It is whether AI actually delivers the 3–5× efficiency gains current trajectories suggest it might, and whether platform therapies scale the way early gene-therapy programs hint they can. If both hold, curing the overwhelming majority of human disease is a within-a-generation problem. If they don't, we are looking at 50–100+ years at much higher cost — still finite, but far enough out that most people reading this will not see the end of it.</p>
+</div>
+
+<p class="closing-kicker">The question is not whether we will eventually cure everything. It is whether we will do it in <em>thirty years</em> or <em>three centuries</em> — and the difference between those two outcomes is not budget. It is the <em>unit of development</em>.</p>
+
+</article>
+
+<section class="glossary">
+  <h2>Glossary</h2>
+  <p class="gloss-sub">Terms marked with a <span class="term" data-slug="example" style="cursor:default">dotted underline</span> in the essay above link here. Hover any term for a quick definition, or click to jump to its full entry below.</p>
+
+  <div class="gloss-nav">
+    <span class="gn-group" data-scroll="g-regulatory">Regulatory</span>
+    <span class="gn-group" data-scroll="g-trials">Clinical trials</span>
+    <span class="gn-group" data-scroll="g-modalities">Drug modalities</span>
+    <span class="gn-group" data-scroll="g-policy">Policy & economics</span>
+    <span class="gn-group" data-scroll="g-vioxx">The Vioxx affair</span>
+    <span class="gn-group" data-scroll="g-other">Other terms</span>
+  </div>
+
+  <div class="gloss-group" id="g-regulatory">
+    <h3>Regulatory & FDA pathways</h3>
+    <dl class="glossary-list">
+      <div class="entry" id="gloss-fda"><dt><span class="acronym">FDA</span>Food and Drug Administration</dt><dd>The US federal agency that regulates drug approvals, device clearances, and food safety. Everything in this essay about "approvals" refers to FDA approval, since the FDA is the primary gatekeeper for the US drug market.</dd></div>
+      <div class="entry" id="gloss-cder"><dt><span class="acronym">CDER</span>Center for Drug Evaluation and Research</dt><dd>The division of the FDA that reviews and approves most new drugs — both small-molecule chemical drugs and most therapeutic biologics. The annual "CDER novel drug approvals" count is the most widely-used metric for US pharmaceutical innovation output.</dd></div>
+      <div class="entry" id="gloss-cber"><dt><span class="acronym">CBER</span>Center for Biologics Evaluation and Research</dt><dd>The FDA division that handles vaccines, blood products, gene therapies, and cellular therapies. CBER approvals are typically counted separately from CDER's novel drug approvals.</dd></div>
+      <div class="entry" id="gloss-nme"><dt><span class="acronym">NME / NDA / BLA</span>Regulatory submissions</dt><dd>An <em>NME</em> (New Molecular Entity) is a drug whose active ingredient has never been approved before. An <em>NDA</em> (New Drug Application) is the submission a sponsor makes to the FDA for a small-molecule drug; a <em>BLA</em> (Biologics License Application) is the equivalent for a biologic.</dd></div>
+      <div class="entry" id="gloss-ind"><dt><span class="acronym">IND</span>Investigational New Drug</dt><dd>The application a drug sponsor files with the FDA to begin human clinical trials. Being "cleared to IND" means the FDA has reviewed the preclinical data and permitted human testing.</dd></div>
+      <div class="entry" id="gloss-pdufa"><dt><span class="acronym">PDUFA</span>Prescription Drug User Fee Act</dt><dd>Originally passed in 1992. Authorizes the FDA to collect user fees from drug sponsors in exchange for commitments to faster, more predictable review timelines. Reauthorized every five years, and each reauthorization (PDUFA V in 2012, VI in 2017, etc.) adds new provisions.</dd></div>
+      <div class="entry" id="gloss-fdasia"><dt><span class="acronym">FDASIA</span>FDA Safety and Innovation Act (2012)</dt><dd>The 2012 PDUFA reauthorization bill, which also created the Breakthrough Therapy Designation and broadened the Accelerated Approval pathway. One of the most consequential pieces of FDA legislation in the last two decades — the policy root of the post-2014 acceleration in novel approvals.</dd></div>
+      <div class="entry" id="gloss-breakthrough"><dt>Breakthrough Therapy Designation</dt><dd>FDA program (created by FDASIA in 2012) that expedites development and review of drugs showing preliminary clinical evidence of substantial improvement over existing therapy for a serious condition. Designated drugs get intensive FDA guidance, senior-management involvement, and are eligible for rolling review. Through June 2024, 587 requests had been granted and 317 resulting products had been approved.</dd></div>
+      <div class="entry" id="gloss-accel"><dt>Accelerated Approval</dt><dd>FDA pathway, originally created in 1992 in response to the HIV/AIDS crisis, that allows approval based on a surrogate endpoint (e.g., tumor shrinkage) reasonably likely to predict clinical benefit. Confirmatory trials are required post-approval. Broadened by FDASIA in 2012.</dd></div>
+      <div class="entry" id="gloss-priority"><dt>Priority Review</dt><dd>FDA review track that shortens the target review time from the standard ~10 months to ~6 months, typically granted when a drug offers significant improvement for a serious condition.</dd></div>
+      <div class="entry" id="gloss-orphan"><dt>Orphan Drug Act / Orphan Designation</dt><dd>1983 US law creating incentives for drug development targeting rare diseases (defined as affecting fewer than 200,000 Americans). Incentives include tax credits for clinical trials, waiver of the PDUFA user fee (currently ~$3M), and 7 years of market exclusivity post-approval. Roughly half of 2025's novel FDA approvals received orphan designation.</dd></div>
+      <div class="entry" id="gloss-plausible"><dt>Plausible mechanism pathway</dt><dd>A newer FDA regulatory concept under development for individualized bespoke therapies targeting ultra-rare conditions. The idea is that for truly unique therapies — e.g., a CRISPR edit designed for a single patient — traditional three-phase clinical trials are impossible, so approval can instead rest on mechanistic evidence that the therapy <em>should</em> work.</dd></div>
+      <div class="entry" id="gloss-icd"><dt><span class="acronym">ICD-11</span>International Classification of Diseases, 11th revision</dt><dd>The World Health Organization's standard coding system for diseases and causes of death. Adopted by WHO member states in 2019 and effective January 2022. Contains approximately 17,000 unique codes and 120,000 codable terms.</dd></div>
+    </dl>
+  </div>
+
+  <div class="gloss-group" id="g-trials">
+    <h3>Clinical trials</h3>
+    <dl class="glossary-list">
+      <div class="entry" id="gloss-phase1"><dt>Phase I trial</dt><dd>The first human trial of a drug, typically in 20–100 healthy volunteers (or, for oncology, patients who have exhausted other options). Focused on safety, tolerability, and finding the right dose range.</dd></div>
+      <div class="entry" id="gloss-phase2"><dt>Phase II trial</dt><dd>Mid-stage trial in 100–300 patients with the target disease. Focused on initial efficacy signal and side-effect profile. Historically the hardest phase to pass — only ~28% of Phase II programs advance to Phase III.</dd></div>
+      <div class="entry" id="gloss-phase3"><dt>Phase III trial</dt><dd>Large, typically randomized and placebo-controlled, confirmatory trial in hundreds to thousands of patients. Required for approval in most indications. Historically ~55% of Phase III programs progress to a regulatory filing.</dd></div>
+      <div class="entry" id="gloss-loa"><dt><span class="acronym">LOA</span>Likelihood of Approval</dt><dd>The cumulative probability that a drug currently in a given phase will eventually receive FDA approval. Today the LOA from Phase I is roughly 6.7% — meaning only about 1 in 15 drugs that enter human trials are ever approved.</dd></div>
+      <div class="entry" id="gloss-biomarker"><dt>Biomarker</dt><dd>A measurable biological indicator — a protein level, a genetic mutation, a tumor characteristic — used to predict disease progression or a patient's likely response to a drug. Biomarker-driven trials are smaller and faster because they enroll only patients predicted to respond.</dd></div>
+      <div class="entry" id="gloss-surrogate"><dt>Surrogate endpoint</dt><dd>A measurable outcome (e.g., tumor shrinkage, LDL cholesterol reduction) used in trials as a stand-in for what patients actually care about (e.g., survival, heart attack prevention). The FDA Accelerated Approval pathway allows approvals based on surrogate endpoints reasonably likely to predict clinical benefit.</dd></div>
+    </dl>
+  </div>
+
+  <div class="gloss-group" id="g-modalities">
+    <h3>Drug classes & modalities</h3>
+    <dl class="glossary-list">
+      <div class="entry" id="gloss-fic"><dt>First-in-class</dt><dd>A drug using a biological mechanism (a novel target or mechanism of action) that no previously approved therapy shares. Note: first-in-class means novel <em>mechanism</em>, not novel <em>disease</em> — the fifth PD-1 inhibitor for lung cancer can be first-in-class by target while adding nothing to the count of treatable diseases.</dd></div>
+      <div class="entry" id="gloss-bic"><dt>Best-in-class / me-too drug</dt><dd>A drug in an already-validated class — often the second, third, or nth entrant with a similar mechanism. "Best-in-class" is the neutral framing; "me-too" is the pejorative. These drugs can still add meaningful value (better side-effect profile, more convenient dosing) but don't expand the set of treatable diseases.</dd></div>
+      <div class="entry" id="gloss-biologic"><dt>Biologic</dt><dd>A drug derived from or produced by living cells — monoclonal antibodies, therapeutic proteins, cell therapies, gene therapies, vaccines. Distinct from small-molecule drugs, which are chemically synthesized. Biologics now account for roughly 60% of pipeline value by projected sales.</dd></div>
+      <div class="entry" id="gloss-biosimilar"><dt>Biosimilar</dt><dd>A near-copy of an approved biologic. Analogous to a generic, but because biologics can't be identically replicated like small-molecule chemicals, biosimilars face a separate approval pathway.</dd></div>
+      <div class="entry" id="gloss-gt"><dt>Gene therapy</dt><dd>A therapy that modifies a patient's genes to treat disease — typically by delivering a corrective gene via a viral vector. Gene therapies can in principle be curative for monogenic diseases.</dd></div>
+      <div class="entry" id="gloss-mrna"><dt><span class="acronym">mRNA</span>messenger RNA therapy</dt><dd>A therapy that delivers synthetic messenger RNA instructing the patient's own cells to produce a therapeutic protein. The most prominent examples are the COVID-19 vaccines; the same platform is being applied to cancer vaccines and rare-disease protein replacement.</dd></div>
+      <div class="entry" id="gloss-crispr"><dt>CRISPR</dt><dd>A gene-editing technology (derived from a bacterial immune system) that can make precise changes to DNA sequences in living cells. The first CRISPR-based therapy (Casgevy, for sickle cell disease) was approved by the FDA in 2023.</dd></div>
+      <div class="entry" id="gloss-aav"><dt><span class="acronym">AAV</span>Adeno-associated virus</dt><dd>A small, non-pathogenic virus that has been engineered into the most common delivery vehicle ("vector") for gene therapies. The corrective gene is packaged inside the AAV shell and delivered to target cells.</dd></div>
+      <div class="entry" id="gloss-adc"><dt><span class="acronym">ADC</span>Antibody-drug conjugate</dt><dd>A targeted cancer therapy that links a cytotoxic chemotherapy drug to a monoclonal antibody. The antibody finds and binds to a specific protein on cancer cells, delivering the toxic payload selectively while sparing healthy tissue.</dd></div>
+      <div class="entry" id="gloss-pd1"><dt>PD-1 inhibitor</dt><dd>A class of cancer immunotherapies (e.g., Keytruda, Opdivo) that block PD-1, a "checkpoint" protein that normally suppresses T-cell attacks. Blocking it unleashes the immune system against tumors. Revolutionary for certain cancers, but with at least five approved entrants, "first-in-class by target" no longer means "first-ever-for-disease."</dd></div>
+      <div class="entry" id="gloss-sglt2"><dt>SGLT2 inhibitor</dt><dd>A class of drugs (e.g., Jardiance, Farxiga) that cause the kidneys to excrete excess glucose in urine. Originally approved for type 2 diabetes, later found to also dramatically benefit heart failure and chronic kidney disease patients. Cited here as an example of a validated class with multiple "me-too" entrants.</dd></div>
+      <div class="entry" id="gloss-monogenic"><dt>Monogenic disease</dt><dd>A disease caused by a mutation in a single gene — e.g., sickle cell disease, cystic fibrosis, hemophilia. Most of the ~7,000 rare diseases are monogenic, which makes them particularly amenable to platform gene therapies where the same delivery technology can in principle correct many different single-gene defects.</dd></div>
+      <div class="entry" id="gloss-platform"><dt>Platform therapy</dt><dd>A drug-development approach where the underlying technology (e.g., an AAV gene-therapy vector, an mRNA-in-lipid-nanoparticle, a CAR-T cell manufacturing process) can be <em>reprogrammed</em> to treat many different diseases by swapping out the disease-specific payload. The core pitch: collapse 7,000 separate drug development programs into perhaps 50–100 platform efforts with disease-specific customizations.</dd></div>
+    </dl>
+  </div>
+
+  <div class="gloss-group" id="g-policy">
+    <h3>Policy & economics</h3>
+    <dl class="glossary-list">
+      <div class="entry" id="gloss-subscription"><dt>Subscription / "Netflix" payment models</dt><dd>An alternative to per-unit drug pricing in which a payer (an insurer, state Medicaid program, or national health system) pays a flat subscription fee for unlimited access to a drug for a defined population over a set period. Used by Louisiana and Washington State for hepatitis C therapies starting in 2019: instead of paying ~$80,000 per treated patient, the state pays a capped annual fee and can treat everyone eligible. The model works best for curative therapies where the payer wants to treat a fixed population once.</dd></div>
+      <div class="entry" id="gloss-blockbuster"><dt>Blockbuster drug</dt><dd>Industry term for a drug that generates at least $1 billion per year in global sales. The blockbuster economic model — a small number of drugs earning outsized revenues from enormous patient populations — is what pharma R&amp;D optimizes for, and is the primary reason rare-disease development requires separate economic incentives (the Orphan Drug Act, advance market commitments, etc.). A drug treating 50 million patients at $2,000/year can clear the blockbuster threshold; a drug for a 5,000-patient rare disease cannot, even at $100,000+ per patient.</dd></div>
+      <div class="entry" id="gloss-amc"><dt><span class="acronym">AMC</span>Advance market commitments</dt><dd>A contracting structure in which a government, foundation, or consortium commits in advance to purchase a specified quantity of a drug at a guaranteed price <em>if</em> the drug meets pre-specified criteria. This de-risks development for sponsors who would otherwise face uncertain markets. AMCs were used to accelerate pneumococcal conjugate vaccines for the developing world (GAVI, ~$1.5B commitment) and to fund Operation Warp Speed's COVID-19 vaccine procurement.</dd></div>
+      <div class="entry" id="gloss-intlrisk"><dt>International risk pooling</dt><dd>Arrangements in which multiple countries jointly finance and share the cost of drug development or procurement — spreading development risk across a larger patient base and national budgets than any single country could support. The concept generalizes AMCs to a multilateral scale and is one of the few economic models that could plausibly support $1B+ development programs for diseases with tiny per-country patient populations.</dd></div>
+      <div class="entry" id="gloss-barda"><dt><span class="acronym">BARDA</span>Biomedical Advanced Research and Development Authority</dt><dd>A US government agency within the Department of Health and Human Services that funds, procures, and in some cases directly develops medical countermeasures against bioterror agents, pandemics, and chemical/radiological threats. BARDA's model — government-funded development with guaranteed procurement at the end — has been proposed as a template for scaled public-sector drug development targeting rare diseases where market-based economics fail.</dd></div>
+      <div class="entry" id="gloss-ncats"><dt><span class="acronym">NCATS</span>National Center for Advancing Translational Sciences</dt><dd>An institute within the NIH (established 2011) focused on speeding the translation of basic biomedical research into clinical applications. NCATS operates the Rare Diseases Clinical Research Network and has been a hub for the "platform therapies across rare diseases" strategy; its first director, Christopher Austin, is the source of the "2,000 years" estimate for rare-disease therapy coverage cited in this essay.</dd></div>
+    </dl>
+  </div>
+
+  <div class="gloss-group" id="g-vioxx">
+    <h3>The Vioxx affair</h3>
+    <dl class="glossary-list">
+      <div class="entry" id="gloss-cox2"><dt>COX-2 inhibitor</dt><dd>A class of anti-inflammatory drugs designed to block cyclo-oxygenase-2, the enzyme involved in pain and inflammation, while sparing COX-1 (which protects the stomach lining). The promise was pain relief with fewer GI side effects than traditional NSAIDs. Vioxx (rofecoxib) and Celebrex (celecoxib) were the two most prominent COX-2 inhibitors; the cardiovascular risk that pulled Vioxx from the market turned out to be a shared property of the COX-2 selective mechanism.</dd></div>
+      <div class="entry" id="gloss-nsaid"><dt><span class="acronym">NSAID</span>Non-steroidal anti-inflammatory drug</dt><dd>The broad drug category that includes aspirin, ibuprofen (Advil), and naproxen (Aleve). Vioxx was marketed as a safer NSAID because it selectively inhibited COX-2; traditional NSAIDs inhibit both COX-1 and COX-2.</dd></div>
+      <div class="entry" id="gloss-vigor"><dt>VIGOR trial</dt><dd><em>Vioxx Gastrointestinal Outcomes Research</em>, 2000. Merck-sponsored trial that showed Vioxx had fewer GI side effects than naproxen — but also showed rofecoxib patients had roughly four times the rate of heart attacks. Merck publicly attributed the difference to a cardioprotective effect of naproxen rather than cardiotoxicity of Vioxx. Later analyses found this interpretation was untenable.</dd></div>
+      <div class="entry" id="gloss-approve"><dt>APPROVe trial</dt><dd><em>Adenomatous Polyp Prevention on Vioxx</em>, 2001–2004. Three-year placebo-controlled trial originally designed to test whether Vioxx prevented recurrent colon polyps. Halted early in September 2004 when cardiovascular events began emerging after 18 months of treatment. The APPROVe findings triggered Merck's voluntary withdrawal of Vioxx.</dd></div>
+    </dl>
+  </div>
+
+  <div class="gloss-group" id="g-other">
+    <h3>Other terms</h3>
+    <dl class="glossary-list">
+      <div class="entry" id="gloss-nord"><dt><span class="acronym">NORD</span>National Organization for Rare Disorders</dt><dd>A US nonprofit founded in 1983, widely regarded as the leading patient-advocacy organization for rare diseases. Primary source for US rare-disease counts and prevalence estimates used in this essay.</dd></div>
+      <div class="entry" id="gloss-pd"><dt>Person-diagnoses</dt><dd>A counting convention used in this essay. Each condition is counted separately for each person who has it: one person with hypertension + diabetes counts as 2 person-diagnoses, not 1 person. This means the total across all conditions is much larger than the US population, because of comorbidities.</dd></div>
+      <div class="entry" id="gloss-crouch"><dt>Institutional crouch</dt><dd>A term used in this essay for the defensive posture an organization adopts after a high-profile failure, where avoiding the next scandal becomes more important than approving the next therapy. The post-Vioxx FDA is the archetypal example; risk-averse me-too drug development displaced work on novel mechanisms for roughly a decade.</dd></div>
+      <div class="entry" id="gloss-tefca"><dt>TEFCA</dt><dd>Trusted Exchange Framework and Common Agreement — the US federal framework for nationwide health information exchange. Referenced in the diagnostics section as infrastructure that makes Bayesian diagnostic tools more effective when they can access longitudinal patient data.</dd></div>
+      <div class="entry" id="gloss-indication"><dt>Indication</dt><dd>The specific disease or condition a drug is approved to treat. A single drug can be approved for multiple indications over time — e.g., pembrolizumab (Keytruda) started as a melanoma drug and is now approved for dozens of cancer types. A "new indication" approval expands access but does not add to the count of treatable diseases.</dd></div>
+      <div class="entry" id="gloss-lifecycle"><dt>Lifecycle approval</dt><dd>An FDA approval that extends an existing drug's reach — a new dose, a new formulation (e.g., extended-release), a new delivery method (e.g., subcutaneous instead of IV), or a new indication. Distinct from genuinely new therapeutic content. Many of the 50-ish annual CDER novel approvals are functionally lifecycle extensions of existing drug classes.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="references">
+  <h2>References &amp; method notes</h2>
+  <p class="refs-sub">Every cited claim in this essay is sourced below. Numbers marked with <b>dashed underline ◊</b> throughout the essay are the author's synthesis, calculation, or projection — not drawn directly from a cited source. We have tried to be explicit about the distinction.</p>
+
+  <ol class="ref-list">
+    <li id="ref1">
+      <span class="ref-source">World Health Organization.</span> "ICD-11 2022 Release" and "ICD-11 comes into effect." WHO, February 11, 2022. ICD-11 contains approximately 17,000 unique codes and 120,000 codable terms, allowing more than 1.6 million clinical situations to be coded through combinations. <a href="https://www.who.int/news/item/11-02-2022-icd-11-2022-release" target="_blank">who.int/news/item/11-02-2022-icd-11-2022-release</a>
+    </li>
+    <li id="ref2">
+      <span class="ref-source">National Organization for Rare Disorders (NORD).</span> "Rare Disease Facts and Statistics" and "More Than 30 Million Americans Living with Rare Diseases," press release, February 23, 2026. "1 in 10 Americans live with a rare disease … Of more than 10,000 known rare diseases, fewer than 5% have an approved treatment." <a href="https://rarediseases.org/understanding-rare-disease/rare-disease-facts-and-statistics/" target="_blank">rarediseases.org/understanding-rare-disease/rare-disease-facts-and-statistics</a>
+    </li>
+    <li id="ref3">
+      <span class="ref-source">RARE-X.</span> "The Power of Being Counted." Monarch Initiative computational harmonization of major rare disease knowledge bases suggested the count exceeds 10,000 conditions (vs. the commonly-cited 7,000 figure). <a href="https://rare-x.org/case-studies/the-power-of-being-counted/" target="_blank">rare-x.org/case-studies/the-power-of-being-counted</a>
+    </li>
+    <li id="ref4">
+      <span class="ref-source">Congressional Budget Office.</span> "Research and Development in the Pharmaceutical Industry," April 2021. Details how expected lifetime revenue drives R&amp;D investment decisions: "The amount of money that drug companies devote to R&amp;D is determined by the amount of revenue they expect to earn from a new drug, the expected cost of developing that drug, and policies that influence the supply of and demand for drugs." The foundational source for the "blockbuster drug" / market-size economics framing. <a href="https://www.cbo.gov/publication/57126" target="_blank">cbo.gov/publication/57126</a>
+    </li>
+    <li id="ref5">
+      <span class="ref-source">U.S. Food and Drug Administration.</span> "Rare Diseases at FDA." "The Orphan Drug Act defines a rare disease as a disease or condition that affects less than 200,000 people in the United States. An estimated 10,000+ rare diseases affect more than 30 million people — approximately one out of every 10 people — in the U.S., and about half of these people are children." <a href="https://www.fda.gov/patients/rare-diseases-fda" target="_blank">fda.gov/patients/rare-diseases-fda</a>
+    </li>
+    <li id="ref6">
+      <span class="ref-source">National Institutes of Health.</span> "Rare Diseases." "Rare diseases were once considered medical curiosities with little public-health impact. But though such diseases are individually rare, collectively an estimated 25 to 30 million Americans are affected." <a href="https://www.nih.gov/about-nih/nih-turning-discovery-into-health/promise-precision-medicine/rare-diseases" target="_blank">nih.gov/about-nih/nih-turning-discovery-into-health/promise-precision-medicine/rare-diseases</a>
+    </li>
+    <li id="ref7">
+      <span class="ref-source">Centers for Disease Control and Prevention.</span> "National Diabetes Statistics Report," updated January 21, 2026. "40.1 million people have diabetes. That's about 1 in every 8 people." <a href="https://www.cdc.gov/diabetes/php/data-research/index.html" target="_blank">cdc.gov/diabetes/php/data-research</a>
+    </li>
+    <li id="ref8">
+      <span class="ref-source">U.S. Census Bureau.</span> Population Estimates Program. US resident population estimate. <a href="https://www.census.gov/topics/population.html" target="_blank">census.gov/topics/population</a>
+    </li>
+    <li id="ref9">
+      <span class="ref-source">Austin, Christopher.</span> Quoted in "Rare Diseases Are a Public Health Issue." NIH Record, April 16, 2021. Then-director of NCATS: "Fewer than 500 rare diseases have an FDA-approved treatment. At the current rate, it will be over 2,000 years before there is a treatment for every rare disease." <a href="https://nihrecord.nih.gov/2021/04/16/rare-diseases-are-public-health-issue" target="_blank">nihrecord.nih.gov/2021/04/16/rare-diseases-are-public-health-issue</a>
+    </li>
+    <li id="ref10">
+      <span class="ref-source">U.S. Food and Drug Administration.</span> "Merck Sharp &amp; Dohme Corp.; Withdrawal of Approval of New Drug Applications for VIOXX (Rofecoxib)." Federal Register, September 13, 2022. Rofecoxib (Vioxx) was approved May 21, 1999 and voluntarily withdrawn by Merck on September 30, 2004. <a href="https://www.federalregister.gov/documents/2022/09/13/2022-19740/" target="_blank">federalregister.gov/documents/2022/09/13/2022-19740</a>
+    </li>
+    <li id="ref11">
+      <span class="ref-source">Topol, Eric J.</span> "Failing the Public Health — Rofecoxib, Merck, and the FDA." New England Journal of Medicine 351:1707-1709, October 21, 2004. "On September 30, 2004, after more than 80 million patients had taken this medicine and annual sales had topped $2.5 billion, the company withdrew the drug … This represents the largest prescription-drug withdrawal in history." <a href="https://www.nejm.org/doi/full/10.1056/NEJMp048286" target="_blank">nejm.org/doi/full/10.1056/NEJMp048286</a>
+    </li>
+    <li id="ref12">
+      <span class="ref-source">Jüni, Peter, et al.</span> "Risk of cardiovascular events and rofecoxib: cumulative meta-analysis." The Lancet, December 2004. NPR summary: "Research later published in the medical journal Lancet estimates that 88,000 Americans had heart attacks from taking Vioxx, and 38,000 of them died." <a href="https://www.npr.org/2007/11/10/5470430/timeline-the-rise-and-fall-of-vioxx" target="_blank">npr.org/2007/11/10/5470430/timeline-the-rise-and-fall-of-vioxx</a>
+    </li>
+    <li id="ref13">
+      <span class="ref-source">Graham, David.</span> Testimony before U.S. Senate Finance Committee, November 18, 2004. FDA drug-safety analyst's estimate: Vioxx "may have caused between 88,000 and 139,000 heart attacks, 30 to 40 percent of which were probably fatal." Cited in Wikipedia's rofecoxib entry and in Union of Concerned Scientists' "Merck Manipulated the Science about the Drug Vioxx." <a href="https://www.ucs.org/resources/merck-manipulated-science-about-drug-vioxx" target="_blank">ucs.org/resources/merck-manipulated-science-about-drug-vioxx</a>
+    </li>
+    <li id="ref14">
+      <span class="ref-source">Curfman, Gregory D., et al.</span> "The Lessons of Vioxx — Drug Safety and Sales." New England Journal of Medicine 354:1891-1893, May 4, 2006. Documents Merck's handling of the VIGOR trial cardiovascular signal and internal sales-force guidance. <a href="https://www.nejm.org/doi/full/10.1056/NEJMp058136" target="_blank">nejm.org/doi/full/10.1056/NEJMp058136</a>
+    </li>
+    <li id="ref15">
+      <span class="ref-source">U.S. Food and Drug Administration.</span> "Fact Sheet: Breakthrough Therapies." FDASIA Section 902, enacted July 9, 2012. <a href="https://www.fda.gov/regulatory-information/food-and-drug-administration-safety-and-innovation-act-fdasia/fact-sheet-breakthrough-therapies" target="_blank">fda.gov/regulatory-information/food-and-drug-administration-safety-and-innovation-act-fdasia/fact-sheet-breakthrough-therapies</a>
+    </li>
+    <li id="ref16">
+      <span class="ref-source">Precision for Medicine.</span> "What Is an FDA Breakthrough Therapy Designation?" 2024 FDA data, citing Friends of Cancer Research. "As of June 30, 2024, the FDA has received 1,516 requests for breakthrough therapy designation, of which 587 have been granted (38.7%). Out of these, 317 breakthrough-designated products have received FDA approval." <a href="https://www.precisionformedicine.com/blog/what-is-an-fda-breakthrough-therapy-designation" target="_blank">precisionformedicine.com/blog/what-is-an-fda-breakthrough-therapy-designation</a>
+    </li>
+    <li id="ref17">
+      <span class="ref-source">Health Affairs Brief.</span> "Expedited Approval Pathways." History of the Accelerated Approval pathway (created 1992 in response to HIV/AIDS) and Breakthrough Therapy Designation (created 2012 via FDASIA). <a href="https://www.healthaffairs.org/content/briefs/expedited-approval-pathways" target="_blank">healthaffairs.org/content/briefs/expedited-approval-pathways</a>
+    </li>
+    <li id="ref18">
+      <span class="ref-source">FDA CDER.</span> "Novel Drug Approvals for 2025." "In 2025, CDER approved 46 new drugs never before approved or marketed in the U.S." Separately, per FDA's 2025 CDER annual report and industry summaries: 23 of 46 received orphan drug designation; 20 (43%) were classified as first-in-class. <a href="https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2025" target="_blank">fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2025</a>
+    </li>
+    <li id="ref19">
+      <span class="ref-source">FDA CDER.</span> "Novel Drug Approvals for 2024." <a href="https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2024" target="_blank">fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2024</a>
+    </li>
+    <li id="ref20">
+      <span class="ref-source">FDA CDER.</span> "Novel Drug Approvals for 2023." <a href="https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2023" target="_blank">fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2023</a>
+    </li>
+    <li id="ref21">
+      <span class="ref-source">Citeline.</span> "Pharma R&amp;D Annual Review 2024." Global pipeline 22,825 drugs as of January 2024, up 7.2% year-over-year; 5,428 new drugs added in 2023. <a href="https://www.citeline.com/-/media/citeline/resources/pdf/white-paper_annual-pharma-rd-review-2024.pdf" target="_blank">citeline.com/.../annual-pharma-rd-review-2024.pdf</a>
+    </li>
+    <li id="ref22">
+      <span class="ref-source">Citeline.</span> "Pharma R&amp;D 2026." At the start of 2026, active global R&amp;D pipeline comprises 22,940 drugs. <a href="https://www.citeline.com/en/rd26" target="_blank">citeline.com/en/rd26</a>
+    </li>
+    <li id="ref23">
+      <span class="ref-source">Chancellor, Daniel / Citeline Biomedtracker.</span> "Why Are Clinical Development Success Rates Falling?" Norstella/Citeline analysis, 2024. Phase-transition analysis for 2014–2023 found overall Phase I likelihood of approval of 6.7% (down from 10.4% in 2014); Phase I→II 47%, Phase II→III 28%, Phase III→Filing 55%, Filing→Approval 92%. Phase I success fell from &gt;75% in 2006–2008 to below 40% by the 2020s. Predecessor analysis: BIO/QLS/Informa, "Clinical Development Success Rates and Contributing Factors 2011–2020," based on 12,728 clinical phase transitions. <a href="https://www.norstella.com/why-clinical-development-success-rates-falling/" target="_blank">norstella.com/why-clinical-development-success-rates-falling</a>
+    </li>
+    <li id="ref24">
+      <span class="ref-source">DiMasi, Joseph A., Henry G. Grabowski &amp; Ronald W. Hansen.</span> "Innovation in the pharmaceutical industry: New estimates of R&amp;D costs." Journal of Health Economics, 2016 (presented November 2014, Tufts Center for the Study of Drug Development). Pre-tax capitalized cost per approval: $2.558 billion (2013 dollars); including post-approval R&amp;D: $2.87 billion. Clinical-approval success rate: 11.83%; full pipeline approval rate per program often cited at ~9.6%. <a href="https://csdd.tufts.edu/cost-study" target="_blank">csdd.tufts.edu/cost-study</a>
+    </li>
+    <li id="ref25">
+      <span class="ref-source">Chandra, Amitabh, et al.</span> "Comprehensive measurement of biopharmaceutical R&amp;D investment." Nature Reviews Drug Discovery, August 2024. Global biopharma R&amp;D investment $276 billion in 2021 across the full ecosystem (~$5 billion per approved drug when amortized across ~50 annual approvals). Comparable industry figures: Evaluate Pharma reports global pharma R&amp;D of ~$288 billion in 2024. <a href="https://www.rdworldonline.com/how-much-does-the-pharma-industry-spend-on-rd-anyway-probably-more-than-you-thought/" target="_blank">rdworldonline.com/how-much-does-the-pharma-industry-spend-on-rd-anyway</a>
+    </li>
+    <li id="ref26">
+      <span class="ref-source">National Academies of Sciences, Engineering, and Medicine.</span> <em>Improving Diagnosis in Health Care.</em> Washington, DC: The National Academies Press, 2015. Most-cited figure, per the Society to Improve Diagnosis in Medicine: "12 million adult Americans in outpatient settings experience a diagnostic error" every year. <a href="https://doi.org/10.17226/21794" target="_blank">doi.org/10.17226/21794</a>
+    </li>
+    <li id="ref27">
+      <span class="ref-source">Newman-Toker, David E., et al.</span> "Burden of serious harms from diagnostic error in the USA." BMJ Quality &amp; Safety, 2023. "An estimated 795,000 Americans become permanently disabled or die annually across care settings because dangerous diseases are misdiagnosed." <a href="https://pubmed.ncbi.nlm.nih.gov/37460118/" target="_blank">pubmed.ncbi.nlm.nih.gov/37460118</a>
+    </li>
+  </ol>
+</section>
+
+<footer>
+  <div>An essay · drafted April 2026</div>
+  <div>Sources: FDA CDER · Citeline / Biomedtracker · CDC BRFSS · NORD · WHO ICD-11 · MalaCards · NIH</div>
+</footer>
+
+</div>
+
+<script>
+// ===================== DATA =====================
+
+const fdaData = [
+  [1985,30],[1986,20],[1987,21],[1988,20],[1989,23],[1990,23],
+  [1991,30],[1992,26],[1993,25],[1994,22],[1995,28],[1996,53],
+  [1997,39],[1998,30],[1999,35],[2000,27],[2001,24],[2002,17],
+  [2003,21],[2004,36],[2005,20],[2006,22],[2007,18],[2008,24],
+  [2009,26],[2010,21],[2011,30],[2012,39],[2013,27],[2014,41],
+  [2015,45],[2016,22],[2017,46],[2018,59],[2019,48],[2020,53],
+  [2021,50],[2022,37],[2023,55],[2024,50],[2025,46]
+];
+
+// era coloring: match the existing widget logic roughly
+function fdaEra(year, count) {
+  if (year <= 1995) return 'era-early';
+  if (year >= 2017) return 'era-modern';
+  // spike years get green in modern-ish era
+  if ((year === 1996 || year === 2014 || year === 2015) ) return 'era-modern';
+  if (year >= 2011 && year <= 2015 && count >= 30) return 'era-early';
+  return 'era-dark';
+}
+
+const conditions = [
+  {name:'Hypertension',       value:122},
+  {name:'Obesity',            value:102},
+  {name:'Hyperlipidemia',     value:95},
+  {name:'Anxiety disorders',  value:65},
+  {name:'Arthritis',          value:60},
+  {name:'Chronic pain',       value:55},
+  {name:'Depression',         value:52},
+  {name:'Substance use',      value:50},
+  {name:'Migraine',           value:41},
+  {name:'Diabetes',           value:38},
+];
+
+// Cumulative coverage curve: % of 900M person-diagnoses covered by top-N conditions
+// Anchored to: top1=14%, top2=25%, top3=35%, top5=49%, top10=82%, top25=93%, top100=97%, top1000=99.5%, top10000=100%
+const plCurve = [
+  {n:1, pct:13.6}, {n:2, pct:25.0}, {n:3, pct:35.5}, {n:4, pct:42.6},
+  {n:5, pct:48.4}, {n:6, pct:54.5}, {n:7, pct:60.5}, {n:8, pct:66.4},
+  {n:9, pct:71.0}, {n:10, pct:75.6}, {n:15, pct:86.0}, {n:20, pct:90.5},
+  {n:25, pct:93.0}, {n:50, pct:95.5}, {n:100, pct:96.7}, {n:250, pct:97.5},
+  {n:500, pct:98.2}, {n:1000, pct:98.8}, {n:2500, pct:99.4}, {n:5000, pct:99.7}, {n:10000, pct:100}
+];
+const TOTAL_PERSON_DX = 900; // millions
+
+// pipeline funnel data
+const pipeline = [
+  {phase:'Preclinical', count:11500, novelty:[22,28,20,18,12]},
+  {phase:'Phase I',     count:5500,  novelty:[20,32,22,16,10]},
+  {phase:'Phase II',    count:4000,  novelty:[18,34,24,14,10]},
+  {phase:'Phase III',   count:2700,  novelty:[14,38,26,14,8]},
+  {phase:'Filed / NDA', count:350,   novelty:[12,40,28,14,6]}
+];
+const pipelineColors = ['#3fb88f','#5aa3d9','#d4a04a','#6b6760','#3a3d41'];
+
+// Projected approvals 2026-2040: [additive, incremental, lifecycle]
+const projData = [
+  [2026,12,22,18],[2027,13,23,19],[2028,14,23,19],
+  [2029,15,24,19],[2030,16,25,20],[2031,18,25,20],
+  [2032,19,26,20],[2033,21,27,20],[2034,23,28,21],
+  [2035,24,29,21],[2036,26,30,22],[2037,27,31,22],
+  [2038,28,32,23],[2039,29,34,23],[2040,30,36,24]
+];
+
+// ===================== TOOLTIP =====================
+const tip = document.getElementById('tooltip');
+function showTip(html, x, y) {
+  tip.innerHTML = html;
+  tip.style.left = (x + 14) + 'px';
+  tip.style.top  = (y + 14) + 'px';
+  tip.style.opacity = 1;
+}
+function hideTip() { tip.style.opacity = 0; }
+
+// ===================== FDA CHART =====================
+(function drawFda() {
+  const svg = document.getElementById('fda-svg');
+  const W = 820, H = 340;
+  const pad = {t: 20, r: 20, b: 50, l: 40};
+  const cw = W - pad.l - pad.r;
+  const ch = H - pad.t - pad.b;
+  const maxV = 65;
+  const n = fdaData.length;
+  const barW = cw / n * 0.72;
+  const step = cw / n;
+
+  let g = '';
+
+  // y gridlines
+  for (let v=0; v<=60; v+=10) {
+    const y = pad.t + ch - (v/maxV) * ch;
+    g += `<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" class="axis-line" opacity="${v===0?1:0.35}"/>`;
+    g += `<text x="${pad.l - 8}" y="${y+4}" class="axis-label" text-anchor="end">${v}</text>`;
+  }
+
+  // bars
+  fdaData.forEach(([yr, v], i) => {
+    const x = pad.l + i * step + (step - barW)/2;
+    const h = (v/maxV) * ch;
+    const y = pad.t + ch - h;
+    const cls = fdaEra(yr, v);
+    g += `<rect class="fda-bar ${cls}" data-yr="${yr}" data-v="${v}" x="${x}" y="${y}" width="${barW}" height="${h}"/>`;
+    // x labels every 5 years
+    if (yr % 5 === 0 || yr === 1985 || yr === 2025) {
+      g += `<text x="${x + barW/2}" y="${H - pad.b + 18}" class="axis-label" text-anchor="middle" transform="rotate(-45, ${x + barW/2}, ${H - pad.b + 18})">${yr}</text>`;
+    }
+  });
+
+  svg.innerHTML = g;
+
+  svg.querySelectorAll('.fda-bar').forEach(bar => {
+    bar.addEventListener('mousemove', e => {
+      const yr = bar.getAttribute('data-yr');
+      const v = bar.getAttribute('data-v');
+      showTip(`<b>${yr}</b> · ${v} novel approvals`, e.clientX, e.clientY);
+    });
+    bar.addEventListener('mouseleave', hideTip);
+  });
+})();
+
+// ===================== PIPELINE FUNNEL =====================
+(function drawFunnel() {
+  const wrap = document.getElementById('funnel-stack');
+  const max = pipeline[0].count;
+  let html = '';
+  pipeline.forEach(p => {
+    const widthPct = (p.count / max) * 100;
+    let segs = '';
+    p.novelty.forEach((n, i) => {
+      segs += `<span class="seg" style="width:${n}%; background:${pipelineColors[i]};" title="${n}%"></span>`;
+    });
+    html += `
+      <div class="funnel-row">
+        <div class="phase">${p.phase}</div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar" style="width:${widthPct}%;">${segs}</div>
+        </div>
+        <div class="funnel-count">~${p.count.toLocaleString()}</div>
+      </div>`;
+  });
+  wrap.innerHTML = html;
+})();
+
+// ===================== PROJECTED APPROVALS =====================
+(function drawProjections() {
+  const svg = document.getElementById('proj-svg');
+  const W = 820, H = 360;
+  const pad = {t: 20, r: 30, b: 50, l: 40};
+  const cw = W - pad.l - pad.r;
+  const ch = H - pad.t - pad.b;
+  const n = projData.length;
+  const maxV = 100;
+  const step = cw / n;
+  const barW = step * 0.72;
+
+  let g = '';
+  // grid
+  for (let v=0; v<=100; v+=20) {
+    const y = pad.t + ch - (v/maxV) * ch;
+    g += `<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" class="axis-line" opacity="${v===0?1:0.35}"/>`;
+    g += `<text x="${pad.l - 8}" y="${y+4}" class="axis-label" text-anchor="end">${v}</text>`;
+  }
+
+  projData.forEach((d, i) => {
+    const [yr, add, inc, life] = d;
+    const total = add + inc + life;
+    const x = pad.l + i * step + (step - barW)/2;
+    // stacked from bottom: additive, incremental, lifecycle
+    let yBase = pad.t + ch;
+    const segments = [
+      {v: add, c: 'var(--add)', label: 'Additive'},
+      {v: inc, c: 'var(--inc)', label: 'Incremental'},
+      {v: life, c: 'var(--life)', label: 'Lifecycle'}
+    ];
+    segments.forEach(s => {
+      const h = (s.v / maxV) * ch;
+      const y = yBase - h;
+      g += `<rect class="proj-seg" data-yr="${yr}" data-label="${s.label}" data-v="${s.v}" data-total="${total}" x="${x}" y="${y}" width="${barW}" height="${h}" fill="${s.c}"/>`;
+      yBase = y;
+    });
+    // year labels every 2 years
+    if (yr % 2 === 0) {
+      g += `<text x="${x + barW/2}" y="${H - pad.b + 18}" class="axis-label" text-anchor="middle">${yr}</text>`;
+    }
+  });
+
+  svg.innerHTML = g;
+
+  svg.querySelectorAll('.proj-seg').forEach(seg => {
+    seg.addEventListener('mousemove', e => {
+      const yr = seg.getAttribute('data-yr');
+      const label = seg.getAttribute('data-label');
+      const v = seg.getAttribute('data-v');
+      const total = seg.getAttribute('data-total');
+      showTip(`<b>${yr}</b> · ${label}: ${v} of ${total}`, e.clientX, e.clientY);
+    });
+    seg.addEventListener('mouseleave', hideTip);
+  });
+})();
+
+// ===================== POWER LAW CHART =====================
+(function drawPowerLaw() {
+  const svg = document.getElementById('pl-svg');
+  const W = 800, H = 320;
+  const pad = {t: 20, r: 30, b: 40, l: 50};
+  const cw = W - pad.l - pad.r;
+  const ch = H - pad.t - pad.b;
+
+  // x is log10
+  const xMin = 0, xMax = 4; // 1 to 10000
+  const xScale = n => pad.l + (Math.log10(Math.max(n,1)) - xMin)/(xMax - xMin) * cw;
+  const yScale = p => pad.t + ch - (p/100) * ch;
+
+  // grid
+  let grid = '';
+  // y grid
+  [0,20,40,60,80,100].forEach(v => {
+    const y = yScale(v);
+    grid += `<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" class="axis-line" opacity="${v===0?1:0.3}"/>`;
+    grid += `<text x="${pad.l-8}" y="${y+4}" class="axis-label" text-anchor="end">${v}%</text>`;
+  });
+  // x log gridlines at 1, 10, 100, 1000, 10000
+  [1,10,100,1000,10000].forEach(v => {
+    const x = xScale(v);
+    grid += `<line x1="${x}" y1="${pad.t}" x2="${x}" y2="${pad.t+ch}" class="axis-line" opacity="0.3"/>`;
+    grid += `<text x="${x}" y="${H - pad.b + 18}" class="axis-label" text-anchor="middle">${v.toLocaleString()}</text>`;
+  });
+  document.getElementById('pl-grid').innerHTML = grid;
+
+  // build smooth path
+  let d = '';
+  let da = '';
+  plCurve.forEach((pt, i) => {
+    const x = xScale(pt.n);
+    const y = yScale(pt.pct);
+    d += (i===0 ? 'M' : 'L') + x + ',' + y + ' ';
+  });
+  // area
+  da = d + `L ${xScale(10000)},${yScale(0)} L ${xScale(1)},${yScale(0)} Z`;
+
+  document.getElementById('pl-line-path').setAttribute('d', d.trim());
+  document.getElementById('pl-area-path').setAttribute('d', da);
+
+  // dots at representative n values
+  const dots = document.getElementById('pl-dots');
+  let dotsHtml = '';
+  plCurve.forEach(pt => {
+    dotsHtml += `<circle class="pl-dot" cx="${xScale(pt.n)}" cy="${yScale(pt.pct)}" r="3.5"/>`;
+  });
+  dots.innerHTML = dotsHtml;
+
+  // marker and slider wiring
+  const slider = document.getElementById('pl-slider');
+  const pct = document.getElementById('pl-pct');
+  const topn = document.getElementById('pl-topn');
+  const topn2 = document.getElementById('pl-topn-2');
+  const coverage = document.getElementById('pl-coverage');
+  const marker = document.getElementById('pl-marker');
+
+  function interp(n) {
+    // interpolate on plCurve by n using linear in log space
+    const x = Math.log10(Math.max(n,1));
+    for (let i=0; i<plCurve.length-1; i++) {
+      const a = plCurve[i], b = plCurve[i+1];
+      const xa = Math.log10(a.n), xb = Math.log10(b.n);
+      if (x >= xa && x <= xb) {
+        const t = (x - xa)/(xb - xa || 1);
+        return a.pct + t*(b.pct - a.pct);
+      }
+    }
+    return plCurve[plCurve.length-1].pct;
+  }
+
+  function update(n) {
+    n = Math.max(1, Math.min(10000, Math.round(n)));
+    const p = interp(n);
+    pct.textContent = p.toFixed(p < 99.5 ? 0 : 1);
+    topn.textContent = n.toLocaleString();
+    topn2.textContent = n.toLocaleString();
+    const cov = Math.round(TOTAL_PERSON_DX * p / 100);
+    coverage.textContent = `~${cov}M`;
+    const xx = xScale(n);
+    const yy = yScale(p);
+    marker.setAttribute('x1', xx);
+    marker.setAttribute('x2', xx);
+    marker.setAttribute('y2', yy);
+    // highlight conditions chart up to n
+    highlightConditions(n);
+  }
+
+  // log-scaled slider: we want the slider to feel logarithmic
+  // we'll use a linear 1-10000 slider but apply exponential mapping for smoothness
+  slider.addEventListener('input', () => {
+    // Convert slider value (1-10000) using log mapping for feel
+    const raw = +slider.value;
+    // map raw to logarithmic position - slider already handles this via value, but we make it feel nicer
+    const logMin = 0, logMax = 4;
+    const t = (raw - 1) / 9999;
+    const n = Math.round(Math.pow(10, logMin + t*(logMax - logMin)));
+    update(n);
+  });
+
+  // init
+  update(10);
+})();
+
+// ===================== TOP CONDITIONS CHART =====================
+function renderConditions(highlightN) {
+  const c = document.getElementById('conditions-chart');
+  const max = Math.max(...conditions.map(d => d.value));
+  let html = '';
+  conditions.forEach((d, i) => {
+    const pct = (d.value / max) * 100;
+    const active = highlightN === undefined || i < highlightN;
+    html += `
+      <div class="cond-row" style="opacity:${active ? 1 : 0.3};">
+        <div class="name">${d.name}</div>
+        <div class="bar-wrap"><div class="bar" style="width:${pct}%"></div></div>
+        <div class="val">${d.value}M</div>
+      </div>`;
+  });
+  c.innerHTML = html;
+}
+function highlightConditions(n) {
+  // dim conditions beyond n (cap at 10 since we only show 10)
+  const cap = Math.min(n, 10);
+  renderConditions(cap);
+}
+renderConditions();
+
+// ===================== GLOSSARY TERM TOOLTIPS =====================
+(function wireGlossaryTerms() {
+  // Build a lookup of slug -> first sentence of definition, from the glossary entries
+  const defMap = {};
+  document.querySelectorAll('.glossary-list .entry').forEach(entry => {
+    const id = entry.id;
+    if (!id || !id.startsWith('gloss-')) return;
+    const slug = id.replace('gloss-', '');
+    const dd = entry.querySelector('dd');
+    if (!dd) return;
+    // Get text content, trim, and grab a short preview
+    let text = dd.textContent.replace(/\s+/g, ' ').trim();
+    // First sentence (up to first '.' followed by space or end) or ~180 chars
+    let firstSent = text.match(/^[^.]+\./);
+    let preview = firstSent ? firstSent[0] : text.slice(0, 180) + '…';
+    if (preview.length > 240) preview = preview.slice(0, 237) + '…';
+    defMap[slug] = preview;
+  });
+
+  // Attach hover + click handlers to every .term
+  document.querySelectorAll('.term').forEach(el => {
+    const slug = el.getAttribute('data-slug');
+    if (!slug) return;
+
+    // Hover: show tooltip with preview
+    el.addEventListener('mousemove', e => {
+      const def = defMap[slug];
+      if (!def) return;
+      const label = el.textContent;
+      showTip('<b>' + label + '</b><br><span style="font-family:Newsreader,serif;font-style:italic;color:#b8b2a4;max-width:320px;display:inline-block;line-height:1.45;margin-top:4px;">' + def + '</span>', e.clientX, e.clientY);
+      const tipEl = document.getElementById('tooltip');
+      tipEl.style.maxWidth = '360px';
+      tipEl.style.whiteSpace = 'normal';
+    });
+    el.addEventListener('mouseleave', () => {
+      hideTip();
+      const tipEl = document.getElementById('tooltip');
+      tipEl.style.maxWidth = '';
+      tipEl.style.whiteSpace = '';
+    });
+
+    // Click: scroll to the glossary entry and flash it
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.getElementById('gloss-' + slug);
+      if (!target) return;
+      hideTip();
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.remove('flash');
+      // Force reflow to restart animation
+      void target.offsetWidth;
+      target.classList.add('flash');
+      setTimeout(() => target.classList.remove('flash'), 2400);
+    });
+
+    // Make it look link-like
+    if (el.tagName !== 'A') {
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    }
+  });
+
+  // Group-nav buttons scroll to group headers
+  document.querySelectorAll('.gn-group').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.getAttribute('data-scroll'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
